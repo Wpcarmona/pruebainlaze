@@ -1,6 +1,6 @@
-import React from 'react';
-import styles from './movieDetails.module.css';
-import { Movie } from '../../types/movies';
+import React from "react";
+import styles from "./movieDetails.module.css";
+import { Movie } from "../../types/movies";
 
 interface MovieDetailsProps {
   movie: Movie;
@@ -15,9 +15,11 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
       <div className={styles.info}>
         <h1 className={styles.title}>{movie.title}</h1>
         <p className={styles.genres}>
-          Géneros: {movie.genres.map((genre) => genre.name).join(', ')}
+          Géneros: {movie.genres.map((genre) => genre.name).join(", ")}
         </p>
-        <p className={styles.releaseDate}>Fecha de estreno: {movie.release_date}</p>
+        <p className={styles.releaseDate}>
+          Fecha de estreno: {movie.release_date}
+        </p>
         <p className={styles.rating}>Rating: {movie.vote_average}/10</p>
         <p className={styles.overview}>{movie.overview}</p>
       </div>

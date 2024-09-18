@@ -1,41 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import {MovieCard} from '../components/index';
-import { Movie } from '../types/movies';
-import { fetchPopularMovies } from '../utils/api';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import MovieDetail from './movieDetails/MovieDetails';
+import MovieListPage from './movies/MovieListPage';
+import { Movie, MovieResponse } from '../types/movieTypes';
+import Auth from './auth/Auth';
+
 
 export default function Home() {
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const loadMovies = async () => {
-      try {
-        const popularMovies = await fetchPopularMovies();
-        setMovies(popularMovies);
-      } catch (error) {
-        console.error('Error fetching movies:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-    loadMovies();
-  }, []);
-
-  if (loading) {
-    return <p>Cargando películas...</p>;
+  if (selectedMovie) {
+    return <MovieDetail movie={selectedMovie} onBack={() => setSelectedMovie(null)} />;
   }
 
   return (
     <div>
-      <h1>Películas Populares</h1>
-      <div>
-        {movies.length > 0 ? (
-          movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
-        ) : (
-          <p>No se encontraron películas.</p>
-        )}
-      </div>
+      <Auth/>
+      <MovieListPage onMovieClick={(movie) => setSelectedMovie(movie)}/>
     </div>
   );
 }

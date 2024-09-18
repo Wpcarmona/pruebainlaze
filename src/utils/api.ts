@@ -1,28 +1,57 @@
-import { Movie } from '../types/movies';
+// src/utils/api.ts
+
+import axios from 'axios';
+import { Movie, MovieResponse } from '../types/movieTypes';
 
 const BASE_URL = 'https://api.themoviedb.org/3';
+const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY; 
 
-export async function getPopularMovies(page: number): Promise<{ results: Movie[] }> {
-  const res = await fetch(`${BASE_URL}/movie/popular?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&page=${page}`);
-  return await res.json();
+const api = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    Authorization: `Bearer ${API_KEY}`,
+    Accept: 'application/json'
+  },
+  params: {
+    language: 'en-EN'
+  },
+});
+
+export async function getMoviesByPath(page: number, path:string): Promise<MovieResponse> {
+  try {
+    const response = await api.get(`/movie/${path}`, {
+      params: {
+        page,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching popular movies:', error);
+    throw error;
+  }
 }
 
 export async function getMovieDetails(id: string): Promise<Movie> {
-  const res = await fetch(`${BASE_URL}/movie/${id}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`);
-  return await res.json();
+  try {
+    const response = await api.get(`/movie/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching details for movie ${id}:`, error);
+    throw error;
+  }
 }
 
 export async function searchMovies(query: string): Promise<Movie[]> {
-    const res = await fetch(`${BASE_URL}/search/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${query}`);
-    const data = await res.json();
-    return data.results;
+  try {
+    const response = await api.get('/search/movie', {
+      params: {
+        query,
+      },
+    });
+    return response.data.results;
+  } catch (error) {
+    console.error('Error searching for movies:', error);
+    throw error;
+  }
 }
-  
-export async function fetchPopularMovies(): Promise<Movie[]> {
-    const res = await fetch(`${BASE_URL}/movie/popular?api_key=${process.env.API_KEY}`);
-    if (!res.ok) {
-      throw new Error('Failed to fetch popular movies');
-    }
-    const data = await res.json();
-    return data.results;
-}
+
